@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Whack-a-Mole</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.2/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://rawgit.com/jeromeetienne/ar.js/master/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <!-- Define camera with GPS tracking -->
+      <a-camera gps-camera="minDistance: 10"></a-camera>
+      <!-- Assets for the mole model -->
+      <a-assets>
+        <a-asset-item
+          id="mole-obj"
+          src="./cat/12221_Cat_v1_l3.obj"></a-asset-item>
+        <a-asset-item
+          id="mole-mtl"
+          src="./cat/12221_Cat_v1_l3.mtl"></a-asset-item>
+      </a-assets>
+      <!-- Mole entity -->
+      <a-entity
+        id="mole"
+        gps-entity-place="latitude: 52.95838812362877; longitude: -1.1808471945582948">
+        <a-entity
+          obj-model="obj: #mole-obj; mtl: #mole-mtl"
+          scale="0.5 0.5 0.5"
+          rotation="0 0 0"
+          animation__move="property: position; to: 0 1 0; dur: 2000; easing: linear; loop: true"
+          animation__scale="property: scale; to: 0.7 0.7 0.7; dur: 1000; dir: alternate; easing: easeInOutQuad; loop: true"
+          animation__rotate="property: rotation; to: 0 360 0; dur: 2000; easing: linear; loop: true"></a-entity>
+      </a-entity>
+      <!-- Scoreboard -->
+      <a-text
+        id="score"
+        value="Score: 0"
+        position="-2 2 -5"
+        color="white"
+        scale="3 3 3"></a-text>
+    </a-scene>
+    <script>
+      // Variables for score and mole
+      var score = 0;
+      var mole = document.querySelector("#mole");
+
+      // Event listener for mole click
+      mole.addEventListener("click", function () {
+        score++;
+        document
+          .querySelector("#score")
+          .setAttribute("value", "Score: " + score);
+        mole.setAttribute(
+          "gps-entity-place",
+          "latitude: " +
+            getRandomLatitude() +
+            "; longitude: " +
+            getRandomLongitude(),
+        );
+      });
+
+      // Function to get random latitude within range
+      function getRandomLatitude() {
+        // Adjust latitude range according to your park area
+        return (
+          Math.random() * (MAX_LATITUDE - MIN_LATITUDE) +
+          MIN_LATITUDE
+        ).toFixed(7);
+      }
+
+      // Function to get random longitude within range
+      function getRandomLongitude() {
+        // Adjust longitude range according to your park area
+        return (
+          Math.random() * (MAX_LONGITUDE - MIN_LONGITUDE) +
+          MIN_LONGITUDE
+        ).toFixed(7);
+      }
+
+      // Constants for defining the park area
+      //52.95838812362877, -1.1808471945582948
+      const MIN_LATITUDE = 52.95838812362877;
+      const MAX_LATITUDE = 52.95838812362877;
+      const MIN_LONGITUDE = -1.1808471945582948;
+      const MAX_LONGITUDE = -1.1808471945582948;
+    </script>
+  </body>
+</html>
