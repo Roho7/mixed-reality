@@ -9,11 +9,24 @@ window.onload = () => {
 function staticLoadPlaces() {
   return [
     {
-      name: "Pokèmon",
+      name: "point1",
       location: {
-        // decomment the following and add coordinates:
-        lat: 52.95394,
-        lng: -1.188074,
+        lat: 52.95235244667728,
+        lng: -1.187375691780795,
+      },
+    },
+    {
+      name: "point2",
+      location: {
+        lat: 52.95256202209106,
+        lng: -1.1874781422479024,
+      },
+    },
+    {
+      name: "point3",
+      location: {
+        lat: 52.95249786339651,
+        lng: -1.1876408553641165,
       },
     },
   ];
@@ -69,7 +82,7 @@ function renderPlaces(places) {
 
     let model = document.createElement("a-entity");
     model.setAttribute(
-      "gps-entity-place",
+      "gps-new-entity-place",
       `latitude: ${latitude}; longitude: ${longitude};`,
     );
 
@@ -80,7 +93,7 @@ function renderPlaces(places) {
     document
       .querySelector('button[data-action="change"]')
       .addEventListener("click", function () {
-        var entity = document.querySelector("[gps-entity-place]");
+        var entity = document.querySelector("[gps-new-entity-place]");
         modelIndex++;
         var newIndex = modelIndex % models.length;
         setModel(models[newIndex], entity);
