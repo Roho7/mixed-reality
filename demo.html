@@ -1,0 +1,44 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Image</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.2/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://rawgit.com/jeromeetienne/ar.js/master/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden">
+    <a href="./index.html">go to main</a>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <!-- Define camera with GPS tracking -->
+      <a-camera gps-camera="minDistance: 10"></a-camera>
+      <!-- Image entity -->
+      <a-image
+        src="./cat/Cat_bump.jpg"
+        gps-entity-place="latitude: 0; longitude: 0;"></a-image>
+    </a-scene>
+    <script>
+      // Initialize the scene when the scene is loaded
+      document.querySelector("a-scene").addEventListener("loaded", function () {
+        // Get the user's current location
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            // Extract latitude and longitude
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            // Set the image's position based on the user's current location
+            var image = document.querySelector("a-image");
+            image.setAttribute(
+              "gps-entity-place",
+              "latitude: " + latitude + "; longitude: " + longitude,
+            );
+          },
+          function (error) {
+            console.error("Error getting location:", error);
+          },
+        );
+      });
+    </script>
+  </body>
+</html>

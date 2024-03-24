@@ -3,131 +3,80 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Whack-a-Mole</title>
+    <title>AR Experience Starter</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.2/aframe/build/aframe-ar-nft.js"></script>
     <script src="https://rawgit.com/jeromeetienne/ar.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #interface {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1;
+      }
+    </style>
   </head>
-  <body style="margin: 0; overflow: hidden">
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-      <!-- Define camera with GPS tracking -->
-      <a-camera gps-camera="minDistance: 10"></a-camera>
-      <!-- Assets -->
-      <a-assets>
-        <!-- Mole model and texture -->
-        <a-asset-item id="mole-obj" src="./cat/cat.obj"></a-asset-item>
-        <a-asset-item id="mole-mtl" src="./cat/cat.mtl"></a-asset-item>
-        <!-- Sound effects -->
-        <!-- <audio id="whackSound" src="path/to/whack.mp3"></audio>
-        <audio id="missSound" src="path/to/miss.mp3"></audio> -->
-        <!-- Texture for mole hit -->
-        <!-- <img id="mole-hit" src="path/to/mole-hit.png" /> -->
-      </a-assets>
-      <!-- Mole entity -->
-      <a-entity
-        id="mole"
+  <body>
+    <div id="interface">
+      <input type="text" id="latitude" placeholder="Latitude" />
+      <input type="text" id="longitude" placeholder="Longitude" />
+      <button id="startButton">Start Experience</button>
+      <a href="./infront.html">Render infront</a>
+    </div>
+    <!-- A-Frame AR scene (initially hidden) -->
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+      style="display: none">
+      <!-- Camera with GPS tracking -->
+      <a-camera
+        gps-camera="simulateLatitude: 0; simulateLongitude: 0; minDistance: 0"></a-camera>
+      <!-- Placeholder for AR content -->
+      <a-image
+        id="arImage"
         gps-entity-place="latitude: 0; longitude: 0;"
-        position="0 9 0"
-        visible="false">
-        <a-entity
-          obj-model="obj: #mole-obj; mtl: #mole-mtl"
-          scale="0.5 0.5 0.5"
-          rotation="0 0 0"
-          animation__move="property: position; to: 0 1 0; dur: 2000; easing: linear; loop: true"
-          animation__scale="property: scale; to: 0.7 0.7 0.7; dur: 1000; dir: alternate; easing: easeInOutQuad; loop: true"></a-entity>
-        <a-plane
-          position="0 9.6 0"
-          scale="0.5 0.5 0.5"
-          material="src: #mole-hit"
-          visible="false"
-          animation__hit="property: visible; to: true; dur: 100; delay: 200; easing: linear; loop: false"></a-plane>
-      </a-entity>
-      <!-- Scoreboard -->
-      <a-text
-        id="score"
-        value="Score: 0"
-        position="-2 2 -5"
-        color="white"
-        scale="3 3 3"></a-text>
+        src="./path/to/your/image.png"
+        height="1"
+        width="1"
+        rotation="-90 0 0"></a-image>
     </a-scene>
+
     <script>
-      // Variables for score and mole
-      var score = 0;
-      var mole = document.querySelector("#mole");
-      var moleHit = document.querySelector("#mole-hit");
-      var whackSound = document.querySelector("#whackSound");
-      var missSound = document.querySelector("#missSound");
-
-      // Event listener for mole click
-      mole.addEventListener("click", function () {
-        score++;
-        document
-          .querySelector("#score")
-          .setAttribute("value", "Score: " + score);
-        moleHit.emit("hit");
-        // whackSound.play();
-        setTimeout(function () {
-          resetMole();
-        }, 1000);
-      });
-
-      // Event listener for scene click (miss)
       document
-        .querySelector("a-scene")
-        .addEventListener("click", function (event) {
-          if (
-            event.detail.intersection &&
-            event.detail.intersection.object.el === mole
-          ) {
-            return; // Do nothing if mole was hit
+        .getElementById("startButton")
+        .addEventListener("click", function () {
+          const lat = document.getElementById("latitude").value;
+          const lon = document.getElementById("longitude").value;
+
+          // Check if latitude and longitude are provided
+          if (lat && lon) {
+            // Hide interface and show A-Frame scene
+            document.getElementById("interface").style.display = "none";
+            document.querySelector("a-scene").style.display = "block";
+
+            // Update camera to simulate position (use gps-camera for real-world use)
+            document
+              .querySelector("a-camera")
+              .setAttribute(
+                "gps-camera",
+                `simulateLatitude: ${lat}; simulateLongitude: ${lon}`,
+              );
+
+            // Set image position
+            document
+              .getElementById("arImage")
+              .setAttribute(
+                "gps-entity-place",
+                `latitude: ${lat}; longitude: ${lon}`,
+              );
+          } else {
+            alert("Please enter both latitude and longitude");
           }
-          //   missSound.play();
-          resetMole();
         });
-
-      // Function to reset mole position and visibility
-      function resetMole() {
-        mole.setAttribute(
-          "gps-entity-place",
-          "latitude: " +
-            getRandomLatitude() +
-            "; longitude: " +
-            getRandomLongitude(),
-        );
-        mole.setAttribute("visible", true);
-        moleHit.setAttribute("visible", false);
-        console.log(
-          "Latitude: " + mole.getAttribute("gps-entity-place").latitude,
-        );
-        console.log(
-          "Longitude: " + mole.getAttribute("gps-entity-place").longitude,
-        );
-        console.log("Altitude: " + mole.getAttribute("position").y);
-      }
-
-      // Function to get random latitude within range
-      function getRandomLatitude() {
-        // Adjust latitude range according to your park area
-        return (
-          Math.random() * (MAX_LATITUDE - MIN_LATITUDE) +
-          MIN_LATITUDE
-        ).toFixed(7);
-      }
-
-      // Function to get random longitude within range
-      function getRandomLongitude() {
-        // Adjust longitude range according to your park area
-        return (
-          Math.random() * (MAX_LONGITUDE - MIN_LONGITUDE) +
-          MIN_LONGITUDE
-        ).toFixed(7);
-      }
-
-      // Constants for defining the park area
-      const MIN_LATITUDE = 52.95836259681182;
-      const MAX_LATITUDE = 52.95854604957995;
-      const MIN_LONGITUDE = -1.1807631664486835;
-      const MAX_LONGITUDE = -1.181004708632827;
     </script>
   </body>
 </html>
