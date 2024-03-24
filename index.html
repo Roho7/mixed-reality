@@ -1,87 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Experience Starter</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.2/aframe/build/aframe-ar-nft.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/ar.js/master/aframe/build/aframe-ar.js"></script>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-      }
-      #interface {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        z-index: 1;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="interface">
-      <button id="startButton">Start Experience</button>
-      <a href="./infront.html">Render infront</a>
-    </div>
-    <!-- A-Frame AR scene (initially hidden) -->
-    <a-scene
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false; videoTexture: true"
-      style="display: none">
-      <!-- Camera with GPS tracking -->
-      <a-camera
-        gps-new-camera="simulateLatitude: 0; simulateLongitude: 0; minDistance: 0"></a-camera>
-      <!-- Placeholder for AR content -->
-      <a-image
-        id="arImage"
-        gps-new-entity-place="latitude: 0; longitude: 0;"
-        src="./path/to/your/image.png"
-        height="1"
-        width="1"
-        rotation="-90 0 0"></a-image>
-    </a-scene>
-
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>GeoAR.js demo</title>
+    <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
     <script>
-      // Boundary values
-      const maxLatitude = 52.95400150440484;
-      const minLatitude = 52.953882310834665;
-      const maxLongitude = -1.1882927197270665;
-      const minLongitude = -1.1880468863295879;
-
-      document
-        .getElementById("startButton")
-        .addEventListener("click", function () {
-          // Hide interface and show A-Frame scene
-          document.getElementById("interface").style.display = "none";
-          document.querySelector("a-scene").style.display = "block";
-
-          // Determine the number of images to render (e.g., between 5 and 10)
-          const numberOfImages = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
-
-          // Generate and place images
-          for (let i = 0; i < numberOfImages; i++) {
-            const latitude =
-              Math.random() * (maxLatitude - minLatitude) + minLatitude;
-            const longitude =
-              Math.random() * (maxLongitude - minLongitude) + minLongitude;
-
-            // Create a new a-image element
-            const newImage = document.createElement("a-image");
-            newImage.setAttribute(
-              "gps-entity-place",
-              `latitude: ${latitude}; longitude: ${longitude}`,
-            );
-            newImage.setAttribute("src", "./path/to/your/image.png"); // Set the path to your image
-            newImage.setAttribute("height", "1");
-            newImage.setAttribute("width", "1");
-            newImage.setAttribute("rotation", "-90 0 0");
-
-            // Append the new image to the scene
-            document.querySelector("a-scene").appendChild(newImage);
-          }
-        });
+      THREEx.ArToolkitContext.baseURL =
+        "https://raw.githack.com/jeromeetienne/ar.js/master/three.js/";
     </script>
+    <script src="./script.js"></script>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+
+  <body style="margin: 0; overflow: hidden">
+    <div class="centered instructions"></div>
+    <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;">
+      <a-camera gps-camera rotation-reader></a-camera>
+    </a-scene>
+    <div class="centered">
+      <button data-action="change"></button>
+    </div>
   </body>
 </html>
