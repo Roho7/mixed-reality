@@ -22,23 +22,21 @@
   </head>
   <body>
     <div id="interface">
-      <input type="text" id="latitude" placeholder="Latitude" />
-      <input type="text" id="longitude" placeholder="Longitude" />
       <button id="startButton">Start Experience</button>
       <a href="./infront.html">Render infront</a>
     </div>
     <!-- A-Frame AR scene (initially hidden) -->
     <a-scene
       embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
+      arjs="sourceType: webcam; debugUIEnabled: false; videoTexture: true"
       style="display: none">
       <!-- Camera with GPS tracking -->
       <a-camera
-        gps-camera="simulateLatitude: 0; simulateLongitude: 0; minDistance: 0"></a-camera>
+        gps-new-camera="simulateLatitude: 0; simulateLongitude: 0; minDistance: 0"></a-camera>
       <!-- Placeholder for AR content -->
       <a-image
         id="arImage"
-        gps-entity-place="latitude: 0; longitude: 0;"
+        gps-new-entity-place="latitude: 0; longitude: 0;"
         src="./path/to/your/image.png"
         height="1"
         width="1"
@@ -46,35 +44,42 @@
     </a-scene>
 
     <script>
+      // Boundary values
+      const maxLatitude = 52.95400150440484;
+      const minLatitude = 52.953882310834665;
+      const maxLongitude = -1.1882927197270665;
+      const minLongitude = -1.1880468863295879;
+
       document
         .getElementById("startButton")
         .addEventListener("click", function () {
-          const lat = document.getElementById("latitude").value;
-          const lon = document.getElementById("longitude").value;
+          // Hide interface and show A-Frame scene
+          document.getElementById("interface").style.display = "none";
+          document.querySelector("a-scene").style.display = "block";
 
-          // Check if latitude and longitude are provided
-          if (lat && lon) {
-            // Hide interface and show A-Frame scene
-            document.getElementById("interface").style.display = "none";
-            document.querySelector("a-scene").style.display = "block";
+          // Determine the number of images to render (e.g., between 5 and 10)
+          const numberOfImages = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
 
-            // Update camera to simulate position (use gps-camera for real-world use)
-            document
-              .querySelector("a-camera")
-              .setAttribute(
-                "gps-camera",
-                `simulateLatitude: ${lat}; simulateLongitude: ${lon}`,
-              );
+          // Generate and place images
+          for (let i = 0; i < numberOfImages; i++) {
+            const latitude =
+              Math.random() * (maxLatitude - minLatitude) + minLatitude;
+            const longitude =
+              Math.random() * (maxLongitude - minLongitude) + minLongitude;
 
-            // Set image position
-            document
-              .getElementById("arImage")
-              .setAttribute(
-                "gps-entity-place",
-                `latitude: ${lat}; longitude: ${lon}`,
-              );
-          } else {
-            alert("Please enter both latitude and longitude");
+            // Create a new a-image element
+            const newImage = document.createElement("a-image");
+            newImage.setAttribute(
+              "gps-entity-place",
+              `latitude: ${latitude}; longitude: ${longitude}`,
+            );
+            newImage.setAttribute("src", "./path/to/your/image.png"); // Set the path to your image
+            newImage.setAttribute("height", "1");
+            newImage.setAttribute("width", "1");
+            newImage.setAttribute("rotation", "-90 0 0");
+
+            // Append the new image to the scene
+            document.querySelector("a-scene").appendChild(newImage);
           }
         });
     </script>
