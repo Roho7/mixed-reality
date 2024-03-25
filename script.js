@@ -11,10 +11,10 @@ function staticLoadPlaces() {
     {
       name: "point1",
       location: {
-        lat: window.GeolocationCoordinates.latitude,
+        lat: 52.94078791417152,
         // lat: 52.95235244667728,
         // lng: -1.187375691780795,
-        lng: window.GeolocationCoordinates.longitude,
+        lng: -1.1908678991741306,
       },
     },
     {
