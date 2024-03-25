@@ -11,8 +11,10 @@ function staticLoadPlaces() {
     {
       name: "point1",
       location: {
-        lat: 52.95235244667728,
-        lng: -1.187375691780795,
+        lat: window.GeolocationCoordinates.latitude,
+        // lat: 52.95235244667728,
+        // lng: -1.187375691780795,
+        lng: window.GeolocationCoordinates.longitude,
       },
     },
     {
@@ -33,12 +35,12 @@ function staticLoadPlaces() {
 }
 
 var models = [
-  {
-    url: "./assets/magnemite/scene.gltf",
-    scale: "0.5 0.5 0.5",
-    info: "Magnemite, Lv. 5, HP 10/10",
-    rotation: "0 180 0",
-  },
+  // {
+  //   url: "./assets/magnemite/scene.gltf",
+  //   scale: "0.08 0.08 0.08",
+  //   info: "Magnemite, Lv. 5, HP 10/10",
+  //   rotation: "0 180 0",
+  // },
   {
     url: "./assets/articuno/scene.gltf",
     scale: "0.2 0.2 0.2",
